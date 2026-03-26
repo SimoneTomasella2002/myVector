@@ -14,12 +14,13 @@ namespace myVect {
 
     template <typename T>
     void myVector<T>::extendArr() {
-        T newArr[capacity*2];
+        T* newArr = new T[capacity*2];
 
         for (int i = 0; i < capacity; i++) {
             newArr[i] = arr[i];
         }
 
+        delete arr;
         arr = newArr;
         capacity *= 2;
     }
