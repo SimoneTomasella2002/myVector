@@ -2,6 +2,7 @@
 #define MYVECTOR_HPP
 
 #include <cstdint>
+#include <limits>
 #include <stdexcept>
 
 template <class T> class myVector {
@@ -16,7 +17,6 @@ template <class T> class myVector {
         // Parameters
         
         // Constructors
-
         myVector() {}
         
         myVector(size_t size, T val) {
@@ -36,8 +36,60 @@ template <class T> class myVector {
         //    myVector(values...);
         //}
         
+        ////////////////////////////////////////////////////////////////////////////
         
-        // Methods
+        // Element Access 
+        T at(int pos) {
+            if (pos >= s_) throw std::out_of_range("Out of range exception!");
+
+            return arr[pos];
+        }
+
+        T operator [] (size_t idx) {
+            return arr[idx];
+        }
+
+        inline T front () { return this->arr[0]; }
+
+        inline T back () { return this->arr[s_]; }
+
+        ////////////////////////////////////////////////////////////////////////////
+
+        // Capacity
+        inline bool empty() { return this->s_ == 0; }
+        
+        inline size_t size() { return this->s_; }
+        
+        inline size_t length() { return this->s_; }
+        
+        inline size_t max_size() { return std::numeric_limits<T>::max(); }
+
+        void reserve(size_t new_cap) {
+            if (new_cap > this->max_size()) throw std::length_error("New cap is higher than max_size");
+            
+            if (new_cap < c_) return;
+
+            T* newArr = new T[new_cap];
+            
+            for (size_t i = 0; i < this->size(); i++) {
+                newArr[i] = arr[i];
+            }
+
+            delete arr;
+
+            arr = newArr;
+            c_ = new_cap;
+        }
+
+        inline size_t capacity() { return this->c_; }
+
+        void shrink_to_fit() { 
+            // TO BE IMPLEMENTED
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+
+        // Modifiers
         void push_back(T val) {
             if (s_ == (c_-1)) {
                 this->extendArr();
@@ -46,25 +98,7 @@ template <class T> class myVector {
             arr[s_] = val;
             s_++;
         }
-        
-        T at(int pos) {
-            if (pos >= s_) throw std::out_of_range("Out of range exception!");
 
-            return arr[pos];
-        }
-        
-        inline size_t size() { return this->s_; }
-
-        inline size_t length() { return this->s_; }
-
-        inline size_t capacity() { return this->c_; }
-        
-        bool empty() { return this->s_ == 0; }
-
-        // Operator Overload
-        T operator [] (size_t idx) {
-            return arr[idx];
-        }
 
         //template <typename... Types>
         //myVector& operator = (Types... values) {
@@ -72,6 +106,8 @@ template <class T> class myVector {
         //}
         
     private:
+
+        // Helpers
         void extendArr() {
             T* newArr = new T[c_*2];
 

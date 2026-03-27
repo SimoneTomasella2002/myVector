@@ -7,6 +7,9 @@ int main () {
     myVector<int> myVect2 (2, 3);
     //myVector<int> myVect3 = {1, 2, 3, 4};
 
+    myVect.reserve(8);
+    std::cout << myVect.size() << " " << myVect.capacity() << std::endl;
+
     myVect2.push_back(4);
     myVect2.push_back(6);
     myVect2.push_back(8);
