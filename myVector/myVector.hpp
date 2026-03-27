@@ -6,8 +6,8 @@
 
 template <class T> class myVector {
     
-    uint32_t s_ = 0;
-    uint32_t c_ = 2;
+    size_t s_ = 0;
+    size_t c_ = 2;
     
     T* arr = new T[2];
 
@@ -19,25 +19,23 @@ template <class T> class myVector {
 
         myVector() {}
         
-        myVector(int size, T val) {
+        myVector(size_t size, T val) {
             s_ = size;
             c_ = size * 2;
-            T* newArr = new T[size];
-            
-            for (int i = 0; i < size; i++) {
-                newArr[i] = val;
+            arr = new T[size];
+
+            for (size_t i = 0; i < size; i++) {
+                arr[i] = val;
             }
-            
-            delete arr;
-            arr = newArr;
         }
 
-        template <typename... Types>
-        myVector(T value, Types... values) {
-            this->push_back(value);
-
-            myVector(values...);
-        }
+        //template <typename... Types>
+        //myVector(T value, Types... values) {
+        //    this->push_back(value);
+//
+        //    myVector(values...);
+        //}
+        
         
         // Methods
         void push_back(T val) {
@@ -55,11 +53,11 @@ template <class T> class myVector {
             return arr[pos];
         }
         
-        inline uint32_t size() { return this->s_; }
+        inline size_t size() { return this->s_; }
 
-        inline uint32_t length() { return this->s_; }
+        inline size_t length() { return this->s_; }
 
-        inline uint32_t capacity() { return this->c_; }
+        inline size_t capacity() { return this->c_; }
         
         bool empty() { return this->s_ == 0; }
 
@@ -68,18 +66,16 @@ template <class T> class myVector {
             return arr[idx];
         }
 
-        template <typename... Types>
-        myVector operator = (Types... values) {
-            return myVector(values...);
-        }
-
-        // friend std::ostream & operator << ( std::ostream &os, const myVector<T> &vect) { }
+        //template <typename... Types>
+        //myVector& operator = (Types... values) {
+        //    return myVector(values...);
+        //}
         
     private:
         void extendArr() {
             T* newArr = new T[c_*2];
-                
-            for (int i = 0; i < c_; i++) {
+
+            for (size_t i = 0; i < c_; i++) {
                 newArr[i] = arr[i];
             }
         
@@ -87,6 +83,8 @@ template <class T> class myVector {
             arr = newArr;
             c_ *= 2;            
         }
+
+
 };
 
 
