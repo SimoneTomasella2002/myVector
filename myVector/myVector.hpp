@@ -4,12 +4,10 @@
 #include <cstdint>
 #include <stdexcept>
 
-namespace myVect {
-
-template <typename T> class myVector {
+template <class T> class myVector {
     
-    uint32_t s = 0;
-    uint32_t c = 2;
+    uint32_t s_ = 0;
+    uint32_t c_ = 2;
     
     T* arr = new T[2];
 
@@ -18,9 +16,12 @@ template <typename T> class myVector {
         // Parameters
         
         // Constructors
+
         myVector() {}
         
         myVector(int size, T val) {
+            s_ = size;
+            c_ = size * 2;
             T* newArr = new T[size];
             
             for (int i = 0; i < size; i++) {
@@ -39,15 +40,31 @@ template <typename T> class myVector {
         }
         
         // Methods
-        void push_back(T val);
-        T at(int pos);
-        uint32_t size();
-        uint32_t length();
-        uint32_t capacity();
-        bool empty();
+        void push_back(T val) {
+            if (s_ == (c_-1)) {
+                this->extendArr();
+            }
+
+            arr[s_] = val;
+            s_++;
+        }
+        
+        T at(int pos) {
+            if (pos >= s_) throw std::out_of_range("Out of range exception!");
+
+            return arr[pos];
+        }
+        
+        inline uint32_t size() { return this->s_; }
+
+        inline uint32_t length() { return this->s_; }
+
+        inline uint32_t capacity() { return this->c_; }
+        
+        bool empty() { return this->s_ == 0; }
 
         // Operator Overload
-        myVector operator [] (int idx) {
+        T operator [] (size_t idx) {
             return arr[idx];
         }
 
@@ -56,16 +73,21 @@ template <typename T> class myVector {
             return myVector(values...);
         }
 
-        friend std::ostream & operator << ( std::ostream &os, const myVector<T> &vect) {
-            
-        }
+        // friend std::ostream & operator << ( std::ostream &os, const myVector<T> &vect) { }
         
     private:
-        void extendArr(); 
+        void extendArr() {
+            T* newArr = new T[c_*2];
+                
+            for (int i = 0; i < c_; i++) {
+                newArr[i] = arr[i];
+            }
+        
+            delete arr;
+            arr = newArr;
+            c_ *= 2;            
+        }
 };
-
-}
-
 
 
 #endif

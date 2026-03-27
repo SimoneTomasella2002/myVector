@@ -3,11 +3,18 @@
 
 int main () {
 
-    myVect::myVector<int> myVect;
-    myVect::myVector<int> myVect2 (2, 3);
-    myVect::myVector<int> myVect3 = {1, 2, 3, 4};
+    myVector<int> myVect;
+    myVector<int> myVect2 (2, 3);
+    //myVect::myVector<int> myVect3 = {1, 2, 3, 4};
 
-    for (int i = 0; i < static_cast<int>(myVect.size()); i++) {
+    // myVect2.at(1);
+    // myVect.push_back(1);
+
+
+    //template<class T> uint32_t myVect::myVector<T>::size()
+    //                  uint32_t myVect::myVector<int>::size()
+
+    for (uint32_t i = 0; i < myVect2.size(); i++) {
         std::cout << myVect2[i] << " "; 
     }
 
