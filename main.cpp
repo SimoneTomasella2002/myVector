@@ -15,11 +15,30 @@ int main () {
     myVect2.push_back(8);
 
     for (size_t i = 0; i < myVect2.size(); i++) {
-        std::cout << myVect2[i] << " "; 
+        std::cout << myVect2[i] << " ";
     }
     std::cout << std::endl;
 
+    myVect2.resize(2);
 
+    for (size_t i = 0; i < myVect2.size(); i++) {
+        std::cout << myVect2[i] << " ";
+    }
+    std::cout << std::endl;
+
+    myVect2.resize(4, 10);
+
+    for (size_t i = 0; i < myVect2.size(); i++) {
+        std::cout << myVect2[i] << " ";
+    }
+    std::cout << std::endl;
+
+    myVect2.pop_back();
+
+    for (size_t i = 0; i < myVect2.size(); i++) {
+        std::cout << myVect2[i] << " ";
+    }
+    std::cout << std::endl;
 
 
     //for (size_t i = 0; i < myVect3.size(); i++) {

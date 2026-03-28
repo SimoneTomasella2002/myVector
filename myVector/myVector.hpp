@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
+#include <cmath>
 
 template <class T> class myVector {
     
@@ -62,7 +63,7 @@ template <class T> class myVector {
         
         inline size_t length() { return this->s_; }
         
-        inline size_t max_size() { return std::numeric_limits<T>::max(); }
+        inline size_t max_size() { return std::numeric_limits<size_t>::max(); }
 
         void reserve(size_t new_cap) {
             if (new_cap > this->max_size()) throw std::length_error("New cap is higher than max_size");
@@ -89,6 +90,42 @@ template <class T> class myVector {
 
         ////////////////////////////////////////////////////////////////////////////
 
+        void clear() {
+            delete arr;
+            s_ = 0;
+            
+            arr = new T[c_];
+        }
+
+        void insert(size_t pos, const T& value) {
+            if (s_ == (c_-1)) {
+                this->extendArr();
+            }
+
+            for (size_t i = s_; i >= pos; i--) {
+                arr[i+1] = arr[i]; 
+            }
+
+            arr[pos] = value;
+            s_++;
+        }
+
+        void insert(size_t pos, uint32_t count, const T& value) {
+            // TO BE IMPLEMENTED
+        }
+
+        void insert_range() {
+            // TO BE IMPLEMENTED
+        }
+
+        void emplace() {
+            // TO BE IMPLEMENTED
+        }
+
+        void erase() {
+            // TO BE IMPLEMENTED
+        }
+
         // Modifiers
         void push_back(T val) {
             if (s_ == (c_-1)) {
@@ -97,6 +134,57 @@ template <class T> class myVector {
 
             arr[s_] = val;
             s_++;
+        }
+
+        void emplace_back() {
+            // TO BE IMPLEMENTED
+        }
+
+        void append_range() {
+            // TO BE IMPLEMENTED
+        }
+
+        constexpr inline void pop_back() {
+            if (s_ == 0) return;
+            
+            arr[s_-1] = T();
+
+            s_--;
+        }
+
+        constexpr void resize(const size_t count) {
+            if (count > this->max_size()) throw std::length_error("New cap is higher than max_size");
+
+            if (count == s_) return;
+
+            for (size_t i = s_; i > count; i--) {
+                arr[i-1] = T();
+            }
+
+            s_ = count;
+        }
+
+        constexpr void resize(const size_t count, const T& value) {
+            if (count <= s_) return resize(count);
+
+            if (count > c_) reserve(count + sqrt(count));
+
+            for (size_t i = s_; i < count; i++) {
+                arr[i] = value;
+                s_++;
+            }
+        }
+
+        void swap(myVector& other) {
+            myVector copy = other;
+            
+            other.arr = this->arr;
+            other.s_ = this->s_;
+            other.c_ = this->c_;
+
+            this->arr = copy.arr;
+            this->s_ = copy.s_;
+            this->c_ = copy.c_;
         }
 
 
