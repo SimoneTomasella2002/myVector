@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <cmath>
 
-template <class T> class myVector {
+template <class T> 
+class myVector {
     
     size_t s_ = 0;
     size_t c_ = 2;
@@ -16,6 +17,7 @@ template <class T> class myVector {
     
     public: 
         // Parameters
+        using iterator = myVectorIterator<T>;
         
         // Constructors
         myVector() {}
@@ -97,7 +99,7 @@ template <class T> class myVector {
             arr = new T[c_];
         }
 
-        void insert(size_t pos, const T& value) {
+        void insert(T* pos, const T& value) {
             if (s_ == (c_-1)) {
                 this->extendArr();
             }
@@ -122,8 +124,12 @@ template <class T> class myVector {
             // TO BE IMPLEMENTED
         }
 
-        void erase() {
-            // TO BE IMPLEMENTED
+        void erase(size_t pos) {
+            
+        }
+
+        void erase(size_t first, size_t last) {
+
         }
 
         // Modifiers
@@ -192,7 +198,19 @@ template <class T> class myVector {
         //myVector& operator = (Types... values) {
         //    return myVector(values...);
         //}
-        
+
+        ////////////////////////////////////////////////////////////////////////////
+
+        // Iterators
+
+        constexpr inline iterator begin() noexcept {
+            return iterator(arr);
+        }
+
+        constexpr inline iterator end() noexcept {
+            return begin() + size_t;
+        }
+
     private:
 
         // Helpers
@@ -211,5 +229,17 @@ template <class T> class myVector {
 
 };
 
+template <class T>
+class myVectorIterator {
+    
+    public: 
+        myVectorIterator() noexcept;
+        myVectorIterator(T* ptr) noexcept : ptr(ptr) {}
+
+    private:
+        T* ptr = nullptr;
+        
+
+};
 
 #endif

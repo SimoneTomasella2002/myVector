@@ -1,6 +1,8 @@
 #include <iostream>
 #include "./myVector/myVector.hpp"
 
+#include <vector>
+
 int main () {
 
     myVector<int> myVect;
@@ -19,27 +21,25 @@ int main () {
     }
     std::cout << std::endl;
 
-    myVect2.resize(2);
+
+    std::vector<int> vec = {0,1,2,3,4};
+
+    auto posVB = vec.begin();
+    auto posVE = vec.end();
+
+    auto pos = myVect2.begin();
+
+    myVect2.insert(pos, 200);
 
     for (size_t i = 0; i < myVect2.size(); i++) {
         std::cout << myVect2[i] << " ";
     }
     std::cout << std::endl;
 
-    myVect2.resize(4, 10);
-
-    for (size_t i = 0; i < myVect2.size(); i++) {
-        std::cout << myVect2[i] << " ";
+    for (auto i : myVect2) {
+        std::cout << i << " ";
     }
     std::cout << std::endl;
-
-    myVect2.pop_back();
-
-    for (size_t i = 0; i < myVect2.size(); i++) {
-        std::cout << myVect2[i] << " ";
-    }
-    std::cout << std::endl;
-
 
     //for (size_t i = 0; i < myVect3.size(); i++) {
     //    std::cout << myVect3[i] << " "; 
