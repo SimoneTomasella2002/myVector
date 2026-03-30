@@ -6,6 +6,19 @@
 #include <stdexcept>
 #include <cmath>
 
+template <class T>
+class myVectorIterator {
+    
+    public: 
+        myVectorIterator() noexcept {}
+        myVectorIterator(T* ptr) noexcept : ptr(ptr) {}
+
+    private:
+        T* ptr = nullptr;
+        
+};
+
+
 template <class T> 
 class myVector {
     
@@ -20,16 +33,23 @@ class myVector {
         using iterator = myVectorIterator<T>;
         
         // Constructors
-        myVector() {}
+        myVector() noexcept {}
         
-        myVector(size_t size, T val) {
-            s_ = size;
-            c_ = size * 2;
-            arr = new T[size];
+        myVector(size_t size, T val) noexcept : 
+            s_(size), 
+            c_(size * 2), 
+            arr(new T[size]) 
+            {
+                arr = new T[size];
 
-            for (size_t i = 0; i < size; i++) {
-                arr[i] = val;
+                for (size_t i = 0; i < size; i++) {
+                    arr[i] = val;
+                }
             }
+
+        // Destructor
+        ~myVector() {
+            delete[] arr;
         }
 
         //template <typename... Types>
@@ -67,10 +87,10 @@ class myVector {
         
         inline size_t max_size() { return std::numeric_limits<size_t>::max(); }
 
-        void reserve(size_t new_cap) {
+        constexpr inline void reserve(size_t new_cap) {
             if (new_cap > this->max_size()) throw std::length_error("New cap is higher than max_size");
             
-            if (new_cap < c_) return;
+            if (new_cap <= c_) return;
 
             T* newArr = new T[new_cap];
             
@@ -78,7 +98,7 @@ class myVector {
                 newArr[i] = arr[i];
             }
 
-            delete arr;
+            delete[] arr;
 
             arr = newArr;
             c_ = new_cap;
@@ -92,8 +112,8 @@ class myVector {
 
         ////////////////////////////////////////////////////////////////////////////
 
-        void clear() {
-            delete arr;
+        constexpr inline void clear() noexcept {
+            delete[] arr;
             s_ = 0;
             
             arr = new T[c_];
@@ -158,7 +178,7 @@ class myVector {
             s_--;
         }
 
-        constexpr void resize(const size_t count) {
+        constexpr inline void resize(const size_t count) {
             if (count > this->max_size()) throw std::length_error("New cap is higher than max_size");
 
             if (count == s_) return;
@@ -170,7 +190,7 @@ class myVector {
             s_ = count;
         }
 
-        constexpr void resize(const size_t count, const T& value) {
+        constexpr inline void resize(const size_t count, const T& value) {
             if (count <= s_) return resize(count);
 
             if (count > c_) reserve(count + sqrt(count));
@@ -181,7 +201,7 @@ class myVector {
             }
         }
 
-        void swap(myVector& other) {
+        constexpr inline void swap(myVector& other) {
             myVector copy = other;
             
             other.arr = this->arr;
@@ -203,11 +223,11 @@ class myVector {
 
         // Iterators
 
-        constexpr inline iterator begin() noexcept {
-            return iterator(arr);
+        constexpr inline myVectorIterator<T> begin() noexcept {
+            return myVectorIterator<T>(arr);
         }
 
-        constexpr inline iterator end() noexcept {
+        constexpr inline myVectorIterator<T> end() noexcept {
             return begin() + size_t;
         }
 
@@ -221,7 +241,7 @@ class myVector {
                 newArr[i] = arr[i];
             }
         
-            delete arr;
+            delete[] arr;
             arr = newArr;
             c_ *= 2;            
         }
@@ -229,17 +249,6 @@ class myVector {
 
 };
 
-template <class T>
-class myVectorIterator {
-    
-    public: 
-        myVectorIterator() noexcept;
-        myVectorIterator(T* ptr) noexcept : ptr(ptr) {}
 
-    private:
-        T* ptr = nullptr;
-        
-
-};
 
 #endif
