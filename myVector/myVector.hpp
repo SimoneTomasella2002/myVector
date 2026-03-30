@@ -13,6 +13,48 @@ class myVectorIterator {
         myVectorIterator() noexcept {}
         myVectorIterator(T* ptr) noexcept : ptr(ptr) {}
 
+        T& operator * () const noexcept {
+            return *ptr;
+        }
+
+        myVectorIterator& operator ++ () noexcept {
+            ++ptr;
+            return *this;
+        }
+
+        myVectorIterator& operator -- () noexcept {
+            --ptr;
+            return *this;
+        }
+
+        std::ptrdiff_t operator - (const myVectorIterator& other) const noexcept {
+            return std::distance(this->ptr, other.ptr);
+        }
+
+        bool operator == (const myVectorIterator& other) const noexcept {
+            return (other - *this) == 0;
+        }
+
+        bool operator != (const myVectorIterator& other) const noexcept {
+            return !(*this == other);
+        }
+
+        bool operator < (const myVectorIterator& other) const noexcept {
+            return 0 < (*this - other);
+        }
+
+        bool operator > (const myVectorIterator& other) const noexcept {
+            return 0 > (*this - other);
+        }
+
+        bool operator <= (const myVectorIterator& other) const noexcept {
+            return 0 <= (*this - other);
+        }
+
+        bool operator >= (const myVectorIterator& other) const noexcept {
+            return 0 >= (*this - other);
+        }
+
     private:
         T* ptr = nullptr;
         
@@ -34,18 +76,21 @@ class myVector {
         
         // Constructors
         myVector() noexcept {}
-        
-        myVector(size_t size, T val) noexcept : 
-            s_(size), 
-            c_(size * 2), 
-            arr(new T[size]) 
-            {
-                arr = new T[size];
 
-                for (size_t i = 0; i < size; i++) {
-                    arr[i] = val;
-                }
+        myVector(const myVector& other) noexcept : s_(other.s_), c_(other.c_) {
+            arr = new T[other.c_];
+            
+            for (size_t i = 0; i < other.s_; i++) {
+                arr[i] = other.arr[i];
             }
+        }
+        
+        myVector(size_t size, T val) noexcept : s_(size), c_(size * 2), arr(new T[size * 2]) 
+        {
+            for (size_t i = 0; i < size; i++) {
+                arr[i] = val;
+            }
+        }
 
         // Destructor
         ~myVector() {
@@ -223,12 +268,12 @@ class myVector {
 
         // Iterators
 
-        constexpr inline myVectorIterator<T> begin() noexcept {
-            return myVectorIterator<T>(arr);
+        constexpr inline iterator begin() noexcept {
+            return iterator(arr);
         }
 
-        constexpr inline myVectorIterator<T> end() noexcept {
-            return begin() + size_t;
+        constexpr inline iterator end() noexcept {
+            return iterator(arr + s_);
         }
 
     private:

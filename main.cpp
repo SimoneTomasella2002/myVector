@@ -8,28 +8,21 @@ int main () {
     myVector<int> myVect;
     myVector<int> myVect2 (2, 3);
     //myVector<int> myVect3 = {1, 2, 3, 4};
+    myVector<int> myVect3 (myVect2);
 
-    myVect.reserve(8);
-    std::cout << myVect.size() << " " << myVect.capacity() << std::endl;
+    for (size_t i = 0; i < myVect3.size(); i++) {
+        std::cout << myVect3[i] << " ";
+    }
+    std::cout << std::endl;
 
     myVect2.push_back(4);
     myVect2.push_back(6);
     myVect2.push_back(8);
 
-    for (size_t i = 0; i < myVect2.size(); i++) {
-        std::cout << myVect2[i] << " ";
+    for (size_t i = 0; i < myVect3.size(); i++) {
+        std::cout << myVect3[i] << " ";
     }
     std::cout << std::endl;
-
-
-    std::vector<int> vec = {0,1,2,3,4};
-
-    auto posVB = vec.begin();
-    auto posVE = vec.end();
-
-    auto pos = myVect2.begin();
-
-    myVect2.insert(pos, 200);
 
     for (size_t i = 0; i < myVect2.size(); i++) {
         std::cout << myVect2[i] << " ";
