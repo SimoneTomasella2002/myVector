@@ -7,52 +7,52 @@
 #include <cmath>
 
 template <class T>
-class myVectorIterator {
+class genericIterator {
     
     public: 
-        myVectorIterator() noexcept {}
-        myVectorIterator(T* ptr) noexcept : ptr(ptr) {}
+        genericIterator() noexcept {}
+        genericIterator(T* ptr) noexcept : ptr(ptr) {}
 
         T& operator * () const noexcept {
             return *ptr;
         }
 
-        myVectorIterator& operator ++ () noexcept {
+        genericIterator& operator ++ () noexcept {
             ++ptr;
             return *this;
         }
 
-        myVectorIterator& operator -- () noexcept {
+        genericIterator& operator -- () noexcept {
             --ptr;
             return *this;
         }
 
-        std::ptrdiff_t operator - (const myVectorIterator& other) const noexcept {
+        std::ptrdiff_t operator - (const genericIterator& other) const noexcept {
             return std::distance(this->ptr, other.ptr);
         }
 
-        bool operator == (const myVectorIterator& other) const noexcept {
+        bool operator == (const genericIterator& other) const noexcept {
             return (other - *this) == 0;
         }
 
-        bool operator != (const myVectorIterator& other) const noexcept {
+        bool operator != (const genericIterator& other) const noexcept {
             return !(*this == other);
         }
 
-        bool operator < (const myVectorIterator& other) const noexcept {
+        bool operator < (const genericIterator& other) const noexcept {
             return 0 < (*this - other);
         }
 
-        bool operator > (const myVectorIterator& other) const noexcept {
-            return 0 > (*this - other);
+        bool operator > (const genericIterator& other) const noexcept {
+            return !(*this > other);
         }
 
-        bool operator <= (const myVectorIterator& other) const noexcept {
-            return 0 <= (*this - other);
+        bool operator <= (const genericIterator& other) const noexcept {
+            return (*this < other) || (*this == other);
         }
 
-        bool operator >= (const myVectorIterator& other) const noexcept {
-            return 0 >= (*this - other);
+        bool operator >= (const genericIterator& other) const noexcept {
+            return (*this > other) || (*this == other);
         }
 
     private:
@@ -72,7 +72,7 @@ class myVector {
     
     public: 
         // Parameters
-        using iterator = myVectorIterator<T>;
+        using iterator = genericIterator<T>;
         
         // Constructors
         myVector() noexcept {}

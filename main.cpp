@@ -2,6 +2,7 @@
 #include "./myVector/myVector.hpp"
 
 #include <vector>
+#include <algorithm>
 
 int main () {
 
@@ -33,6 +34,10 @@ int main () {
         std::cout << i << " ";
     }
     std::cout << std::endl;
+
+    std::for_each(myVect2.begin(), myVect2.end(), [](const int n){ std::cout << n << " "; });
+    std::cout << std::endl;
+
 
     //for (size_t i = 0; i < myVect3.size(); i++) {
     //    std::cout << myVect3[i] << " "; 
