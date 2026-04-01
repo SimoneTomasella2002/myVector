@@ -5,6 +5,7 @@
 #include <limits>
 #include <stdexcept>
 #include <cmath>
+#include <memory>
 
 template <class T>
 class genericIterator {
@@ -44,15 +45,15 @@ class genericIterator {
         }
 
         bool operator > (const genericIterator& other) const noexcept {
-            return !(*this > other);
+            return 0 > (*this - other);
         }
 
         bool operator <= (const genericIterator& other) const noexcept {
-            return (*this < other) || (*this == other);
+            return !(*this > other);
         }
 
         bool operator >= (const genericIterator& other) const noexcept {
-            return (*this > other) || (*this == other);
+            return !(*this < other);
         }
 
     private:
@@ -67,35 +68,33 @@ class myVector {
     size_t s_ = 0;
     size_t c_ = 2;
     
-    T* arr = new T[2];
+    std::unique_ptr<T[]> data_ = std::make_unique<T[]> (2);
 
     
     public: 
-        // Parameters
-        using iterator = genericIterator<T>;
+        // Aliases
+        // using iterator = genericIterator<T>;
         
         // Constructors
         myVector() noexcept {}
 
         myVector(const myVector& other) noexcept : s_(other.s_), c_(other.c_) {
-            arr = new T[other.c_];
+            data_.reset(new T[other.c_]);
             
             for (size_t i = 0; i < other.s_; i++) {
-                arr[i] = other.arr[i];
+                data_[i] = other.data_[i];
             }
         }
         
-        myVector(size_t size, T val) noexcept : s_(size), c_(size * 2), arr(new T[size * 2]) 
+        myVector(size_t size, T val) noexcept : s_(size), c_(size * 2), data_(std::make_unique<T[]>(size)) 
         {
             for (size_t i = 0; i < size; i++) {
-                arr[i] = val;
+                data_[i] = val;
             }
         }
 
         // Destructor
-        ~myVector() {
-            delete[] arr;
-        }
+        ~myVector() = default;
 
         //template <typename... Types>
         //myVector(T value, Types... values) {
@@ -110,16 +109,16 @@ class myVector {
         T at(int pos) {
             if (pos >= s_) throw std::out_of_range("Out of range exception!");
 
-            return arr[pos];
+            return data_[pos];
         }
 
         T operator [] (size_t idx) {
-            return arr[idx];
+            return data_[idx];
         }
 
-        inline T front () { return this->arr[0]; }
+        inline T front () { return this->data_[0]; }
 
-        inline T back () { return this->arr[s_]; }
+        inline T back () { return this->data_[s_]; }
 
         ////////////////////////////////////////////////////////////////////////////
 
@@ -137,15 +136,14 @@ class myVector {
             
             if (new_cap <= c_) return;
 
-            T* newArr = new T[new_cap];
+            std::unique_ptr<T[]> newData = std::make_unique<T[]> (new_cap);
             
             for (size_t i = 0; i < this->size(); i++) {
-                newArr[i] = arr[i];
+                newData[i] = data_[i];
             }
 
-            delete[] arr;
+            data_.swap(newData);
 
-            arr = newArr;
             c_ = new_cap;
         }
 
@@ -158,10 +156,9 @@ class myVector {
         ////////////////////////////////////////////////////////////////////////////
 
         constexpr inline void clear() noexcept {
-            delete[] arr;
-            s_ = 0;
+            data_.reset(new T[c_]);
             
-            arr = new T[c_];
+            s_ = 0;
         }
 
         void insert(T* pos, const T& value) {
@@ -170,10 +167,10 @@ class myVector {
             }
 
             for (size_t i = s_; i >= pos; i--) {
-                arr[i+1] = arr[i]; 
+                data_[i+1] = data_[i]; 
             }
 
-            arr[pos] = value;
+            data_[pos] = value;
             s_++;
         }
 
@@ -203,7 +200,7 @@ class myVector {
                 this->extendArr();
             }
 
-            arr[s_] = val;
+            data_[s_] = val;
             s_++;
         }
 
@@ -218,7 +215,7 @@ class myVector {
         constexpr inline void pop_back() {
             if (s_ == 0) return;
             
-            arr[s_-1] = T();
+            data_[s_-1] = T();
 
             s_--;
         }
@@ -229,7 +226,7 @@ class myVector {
             if (count == s_) return;
 
             for (size_t i = s_; i > count; i--) {
-                arr[i-1] = T();
+                data_[i-1] = T();
             }
 
             s_ = count;
@@ -241,7 +238,7 @@ class myVector {
             if (count > c_) reserve(count + sqrt(count));
 
             for (size_t i = s_; i < count; i++) {
-                arr[i] = value;
+                data_[i] = value;
                 s_++;
             }
         }
@@ -249,11 +246,11 @@ class myVector {
         constexpr inline void swap(myVector& other) {
             myVector copy = other;
             
-            other.arr = this->arr;
+            other.data_ = this->data_;
             other.s_ = this->s_;
             other.c_ = this->c_;
 
-            this->arr = copy.arr;
+            this->data_ = copy.data_;
             this->s_ = copy.s_;
             this->c_ = copy.c_;
         }
@@ -268,27 +265,27 @@ class myVector {
 
         // Iterators
 
-        constexpr inline iterator begin() noexcept {
-            return iterator(arr);
+        constexpr inline T* begin() noexcept {
+            return data_.get();
         }
 
-        constexpr inline iterator end() noexcept {
-            return iterator(arr + s_);
+        constexpr inline T* end() noexcept {
+            return data_.get() + s_;
         }
 
     private:
 
         // Helpers
         void extendArr() {
-            T* newArr = new T[c_*2];
-
+            std::unique_ptr<T[]> newData = std::make_unique<T[]> (c_*2);
+            
             for (size_t i = 0; i < c_; i++) {
-                newArr[i] = arr[i];
+                newData[i] = data_[i];
             }
-        
-            delete[] arr;
-            arr = newArr;
-            c_ *= 2;            
+
+            data_.swap(newData);
+
+            c_ *= 2;       
         }
 
 
